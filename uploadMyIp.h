@@ -53,7 +53,7 @@ void uploadMyIp()
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
 		//add header info
-		chunk = curl_slist_append(chunk, "Authorization: Bearer 4LB8CnShD0gAAAAAAAAJcLKjzBg-ggTgoIUOuvFT3wBFJLlPXz4dRO21fZs_IgQf");
+		chunk = curl_slist_append(chunk, "Authorization: Bearer <here put your code>");
 		chunk = curl_slist_append(chunk, "Content-Type: application/json");
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
 
