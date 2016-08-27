@@ -4,6 +4,7 @@
 #include <conio.h>
 #pragma comment (lib, "Ws2_32.lib")
 
+
 #define PORT "38010"
 
 class Connection{
