@@ -43,7 +43,7 @@ public:
 		CreateProcess(app_spawn, NULL, NULL, NULL, TRUE, CREATE_NEW_CONSOLE, NULL, NULL, &startInfo, &procInfo);
 	}
 	
-	void start(bool a){
+	void start(){
 
 		//try to get connection
 		con.start();
@@ -63,7 +63,6 @@ public:
 		} while (readSize == 0);
 
 		bool outSend = false;
-		char buffer[BUFFSIZE];
 		int msgDiff = 0;
 
 		char * bufSuffix = "\r\n";

@@ -9,7 +9,7 @@ size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 	return size * nmemb;
 }
 
-//http request to get my public IP (apify.org)
+//http request to get my public IP (ipify.org)
 string getMyIP(){ 
 	CURL *curl;
 	string readBuffer;

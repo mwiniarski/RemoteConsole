@@ -5,6 +5,7 @@
 #pragma comment (lib, "Ws2_32.lib")
 
 #define PORT "38010"
+#define PORT2 38010
 
 class Connection{
 private:
@@ -42,6 +43,16 @@ public:
 		hints.ai_protocol = IPPROTO_TCP;    // TCP connection!!!
 		hints.ai_flags = AI_PASSIVE;
 
+		//////////////////////
+		sockaddr_in localAddress;
+		localAddress.sinfamily = AF_INET;
+		localAddress.sin_port = htons(10000);  // or whatever port you'd like to listen to
+		localAddress.sin_addr.s_addr = INADDR_ANY;
+
+		bind(s, (SOCKADDR*)&localAddress, sizeof(localAddress));
+		listen(s, SOMAXCONN);
+		/////////////////////////
+
 		// Resolve the server address and port
 		iResult = getaddrinfo(NULL, PORT, &hints, &result);
 
@@ -53,7 +64,6 @@ public:
 
 		// Create a SOCKET for connecting to server
 		ListenSocket = WSASocket(result->ai_family, result->ai_socktype, result->ai_protocol, NULL, 0, WSA_FLAG_NO_HANDLE_INHERIT);
-		//ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
 
 		if (ListenSocket == INVALID_SOCKET) {
 			printf("socket failed with error: %ld\n", WSAGetLastError());
