@@ -1,7 +1,6 @@
 #include <ws2tcpip.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <conio.h>
+#include "Logger.h"
 #pragma comment (lib, "Ws2_32.lib")
 
 #define PORT "38010"
@@ -20,7 +19,7 @@ public:
 
 		// create WSADATA object
 		WSADATA wsaData;
-
+		
 		// our sockets for the server
 		ListenSocket = INVALID_SOCKET;
 		ClientSocket = INVALID_SOCKET;
@@ -31,10 +30,7 @@ public:
 		
 		// Initialize Winsock
 		iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-		if (iResult != 0) {
-			printf("WSAStartup failed with error: %d\n", iResult);
-			exit(1);
-		}
+		LOG("WSAStartup", iResult, true);
 		
 		// set address information
 		ZeroMemory(&hints, sizeof(hints));
@@ -44,67 +40,57 @@ public:
 		hints.ai_flags = AI_PASSIVE;
 
 		//////////////////////
-		sockaddr_in localAddress;
+/*		sockaddr_in localAddress;
 		localAddress.sinfamily = AF_INET;
 		localAddress.sin_port = htons(10000);  // or whatever port you'd like to listen to
 		localAddress.sin_addr.s_addr = INADDR_ANY;
 
 		bind(s, (SOCKADDR*)&localAddress, sizeof(localAddress));
 		listen(s, SOMAXCONN);
-		/////////////////////////
+	*/	/////////////////////////
 
 		// Resolve the server address and port
 		iResult = getaddrinfo(NULL, PORT, &hints, &result);
-
-		if (iResult != 0) {
-			printf("getaddrinfo failed with error: %d\n", iResult);
-			WSACleanup();
-			exit(1);
-		}
+		LOG("Get address info", iResult);
 
 		// Create a SOCKET for connecting to server
 		ListenSocket = WSASocket(result->ai_family, result->ai_socktype, result->ai_protocol, NULL, 0, WSA_FLAG_NO_HANDLE_INHERIT);
-
 		if (ListenSocket == INVALID_SOCKET) {
-			printf("socket failed with error: %ld\n", WSAGetLastError());
 			freeaddrinfo(result);
-			WSACleanup();
-			exit(1);
+			iResult = WSAGetLastError();
 		}
+		LOG("Creating socket", iResult);
 
 		// Setup the TCP listening socket
 		iResult = bind(ListenSocket, result->ai_addr, (int)result->ai_addrlen);
 
 		if (iResult == SOCKET_ERROR) {
-			printf("bind failed with error: %d\n", WSAGetLastError());
 			freeaddrinfo(result);
 			closesocket(ListenSocket);
-			WSACleanup();
-			exit(1);
 		}
+		LOG("Binding", iResult);
 
 		// no longer need address information
 		freeaddrinfo(result);
 
 		// start listening for new clients attempting to connect
 		iResult = listen(ListenSocket, SOMAXCONN);
-
 		if (iResult == SOCKET_ERROR) {
-			printf("listen failed with error: %d\n", WSAGetLastError());
 			closesocket(ListenSocket);
-			WSACleanup();
-			exit(1);
 		}
+		LOG("Listening", iResult);
 	}
 
 	void start(){
 		// if client waiting, accept the connection and save the socket
+		LOG("Waiting for client...");
 		ClientSocket = accept(ListenSocket, NULL, NULL);
 		if (ClientSocket == INVALID_SOCKET) {
-			printf("accept failed: %d\n", WSAGetLastError());
-			WSACleanup();
+			iResult = WSAGetLastError();
 			return;
 		}
+		LOG("Client accepted","Socket error", iResult);
+	
 		// No longer need server socket
 		closesocket(ListenSocket);
 	}

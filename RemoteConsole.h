@@ -146,6 +146,5 @@ public:
 		CloseHandle(newstdout);
 		CloseHandle(read_stdout);
 		CloseHandle(write_stdin);
-		
 	}
 };

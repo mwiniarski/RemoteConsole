@@ -5,8 +5,9 @@
 
 void main()
 {
-	IpUploadScheduler ipus(500);
-	ipus.run();
+	LOG("SERVER");
+	//IpUploadScheduler ipus(500);
+	//ipus.run();
 
 	RemoteConsole rem;
 	rem.start();
