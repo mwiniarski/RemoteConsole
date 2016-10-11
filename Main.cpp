@@ -2,12 +2,9 @@
 #include "RemoteConsole.h"
 #include "IpUploadScheduler.h"
 
+void mainLoop(){
 
-void main()
-{
 	LOG("SERVER");
-	//IpUploadScheduler ipus(500);
-	//ipus.run();
 
 	Connection * theConnection = new Connection();
 	RemoteConsole * console;
@@ -16,5 +13,15 @@ void main()
 		console->start();
 		delete console;
 	}
-	
+}
+
+
+
+void main()
+{
+	//IpUploadScheduler ipus(500);
+	//ipus.run();
+	mainLoop();
+
+
 }

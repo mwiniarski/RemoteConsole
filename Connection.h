@@ -5,7 +5,6 @@
 
 
 #define PORT "38010"
-#define PORT2 38010
 
 class Connection{
 private:
@@ -31,7 +30,7 @@ public:
 		
 		// Initialize Winsock
 		iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-		LOG("WSAStartup", iResult, true);
+		LOG("WSAStartup", iResult);
 		
 		// set address information
 		ZeroMemory(&hints, sizeof(hints));
@@ -39,16 +38,6 @@ public:
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_protocol = IPPROTO_TCP;    // TCP connection!!!
 		hints.ai_flags = AI_PASSIVE;
-
-		//////////////////////
-/*		sockaddr_in localAddress;
-		localAddress.sinfamily = AF_INET;
-		localAddress.sin_port = htons(10000);  // or whatever port you'd like to listen to
-		localAddress.sin_addr.s_addr = INADDR_ANY;
-
-		bind(s, (SOCKADDR*)&localAddress, sizeof(localAddress));
-		listen(s, SOMAXCONN);
-	*/	/////////////////////////
 
 		// Resolve the server address and port
 		iResult = getaddrinfo(NULL, PORT, &hints, &result);
@@ -86,31 +75,39 @@ public:
 		// if client waiting, accept the connection and save the socket
 		LOG("Waiting for client...");
 		ClientSocket = accept(ListenSocket, NULL, NULL);
+		iResult = 0;
 
 		if (ClientSocket == INVALID_SOCKET) {
 			iResult = WSAGetLastError();
 			return 0;
 		}
 
-		LOG("Client accepted","Socket error", iResult);		
+		LOG("Client accepted","Client accept", iResult);	
+		LOG("Messages from client: ");
 		return 1;
 	}
 
+	//send message to client
 	void sendMessage(char * message, int length){
 		send(ClientSocket, message, length + 1, 0);
 	}
+
+	//get message from client - blocking!
 	int getMessage(char * message, int size){
 		iResult = recv(ClientSocket, message, size, 0);
+
+		//happens when client exits application or connation fails
 		if (iResult == SOCKET_ERROR){
-			LOG("Closed socket", iResult);
+			LOG("|Connection closed", -2);
+			return 0;
 		}
+		return 1;
 	}
 
 	~Connection(){
-		//freeaddrinfo(iResult);
 		// shutdown the connection since we're done
 		shutdown(ClientSocket, SD_SEND);
-
+	
 		// cleanup
 		closesocket(ClientSocket);
 		WSACleanup();

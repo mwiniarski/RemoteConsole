@@ -7,11 +7,15 @@ using namespace std;
 
 class RemoteConsole{
 private:
+
 	//init - for making process
 	STARTUPINFO startInfo;
 	SECURITY_ATTRIBUTES securityAttr;
 	PROCESS_INFORMATION procInfo;
+
+	//pointer to object passed in constructor
 	Connection * con;
+
 	//handles for pipes
 	HANDLE newstdin, newstdout, read_stdout, write_stdin;
 	
@@ -48,7 +52,7 @@ public:
 
 		//try to get connection
 		if (con->start() != 1) {
-			LOG("Connection start failer", -1);
+			LOG("Connection start failed", -1);
 			return 0;
 		};
 
@@ -68,7 +72,8 @@ public:
 
 		bool outSend = false;
 		int msgDiff = 0;
-
+		int result;
+	
 		char * bufSuffix = "\r\n";
 		//main program loop
 		for (;;)
@@ -76,7 +81,8 @@ public:
 			//if you exit CMD ( ex. type 'exit' ) program stops
 			GetExitCodeProcess(procInfo.hProcess, &exit);
 			if (exit != STILL_ACTIVE) {
-				return 2;
+				LOG("|Closed by client", -2);
+				return 1;
 			}
 
 			//look inside the pipe, is there anything?
@@ -119,21 +125,29 @@ public:
 			//take whole command 
 			
 			// SYNCHRONOUS SOCKET WAITING HERE
-	
-				con->getMessage(inBuffer, sizeof(inBuffer));
-				cout << inBuffer;	
+
+				result = con->getMessage(inBuffer, sizeof(inBuffer));	
 		
 			// ===============================
-			
+
+			if (result != 1) {
+				return 2;
+			}
 			msgDiff--;
+
+			//print what you've got
+			LOG(inBuffer, -3);
+
 			//if its CTRL+D -> exit
 			if (inBuffer[0] == '\x4'){
-				return 1;
+				LOG("|Closed by client", -2);
+				return 3;
 			}
 
 			if (msgDiff != 0){
 				continue;
 			}
+
 			//  'cd\0'  -->  'cd'  cos we dont want \0 in WriteFile()
 			WriteFile(write_stdin, inBuffer, strlen(inBuffer), &readSize, NULL);
 
