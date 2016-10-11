@@ -9,7 +9,12 @@ void main()
 	//IpUploadScheduler ipus(500);
 	//ipus.run();
 
-	RemoteConsole rem;
-	rem.start();
+	Connection * theConnection = new Connection();
+	RemoteConsole * console;
+	for (;;) {
+		console = new RemoteConsole(theConnection);
+		console->start();
+		delete console;
+	}
 	
 }

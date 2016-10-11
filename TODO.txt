@@ -1,0 +1,2 @@
+fix netstat thing
+nie da sie przerwaæ super-d³ugiego polecenia - multithread ?

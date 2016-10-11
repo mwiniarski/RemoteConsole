@@ -82,25 +82,28 @@ public:
 		LOG("Listening", iResult);
 	}
 
-	void start(){
+	int start(){
 		// if client waiting, accept the connection and save the socket
 		LOG("Waiting for client...");
 		ClientSocket = accept(ListenSocket, NULL, NULL);
+
 		if (ClientSocket == INVALID_SOCKET) {
 			iResult = WSAGetLastError();
-			return;
+			return 0;
 		}
-		LOG("Client accepted","Socket error", iResult);
-	
-		// No longer need server socket
-		closesocket(ListenSocket);
+
+		LOG("Client accepted","Socket error", iResult);		
+		return 1;
 	}
 
 	void sendMessage(char * message, int length){
 		send(ClientSocket, message, length + 1, 0);
 	}
-	void getMessage(char * message, int size){
-		recv(ClientSocket, message, size, 0);
+	int getMessage(char * message, int size){
+		iResult = recv(ClientSocket, message, size, 0);
+		if (iResult == SOCKET_ERROR){
+			LOG("Closed socket", iResult);
+		}
 	}
 
 	~Connection(){

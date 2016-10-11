@@ -11,13 +11,14 @@ private:
 	STARTUPINFO startInfo;
 	SECURITY_ATTRIBUTES securityAttr;
 	PROCESS_INFORMATION procInfo;
-	Connection con;
+	Connection * con;
 	//handles for pipes
 	HANDLE newstdin, newstdout, read_stdout, write_stdin;
 	
 public:
-	RemoteConsole(){
+	RemoteConsole(Connection * con){
 
+		this->con = con;
 		securityAttr.lpSecurityDescriptor = NULL;
 		securityAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
 		securityAttr.bInheritHandle = true;
@@ -43,10 +44,13 @@ public:
 		CreateProcess(app_spawn, NULL, NULL, NULL, TRUE, CREATE_NEW_CONSOLE, NULL, NULL, &startInfo, &procInfo);
 	}
 	
-	void start(){
+	int start(){
 
 		//try to get connection
-		con.start();
+		if (con->start() != 1) {
+			LOG("Connection start failer", -1);
+			return 0;
+		};
 
 		DWORD exit = 0;   //for process exit
 		DWORD readSize = 0;   //bytes
@@ -71,8 +75,9 @@ public:
 		{
 			//if you exit CMD ( ex. type 'exit' ) program stops
 			GetExitCodeProcess(procInfo.hProcess, &exit);
-			if (exit != STILL_ACTIVE)
-				break;
+			if (exit != STILL_ACTIVE) {
+				return 2;
+			}
 
 			//look inside the pipe, is there anything?
 			PeekNamedPipe(read_stdout, outBuffer, BUFFSIZE - 1, &readSize, NULL, NULL);
@@ -87,7 +92,7 @@ public:
 
 				// PUT HERE SOCKET SENDING ==
 
-					con.sendMessage(outBuffer, readSize);
+					con->sendMessage(outBuffer, readSize);
 					
 				// ==========================
 				
@@ -110,20 +115,21 @@ public:
 
 			//take input from user
 			char inBuffer[BUFFSIZE];
-
+			memset(inBuffer, 0, sizeof(inBuffer));
 			//take whole command 
 			
 			// SYNCHRONOUS SOCKET WAITING HERE
 	
-				con.getMessage(inBuffer, sizeof(inBuffer));
+				con->getMessage(inBuffer, sizeof(inBuffer));
 				cout << inBuffer;	
 		
 			// ===============================
 			
 			msgDiff--;
 			//if its CTRL+D -> exit
-			if (inBuffer[0] == '\x4')
-				break;
+			if (inBuffer[0] == '\x4'){
+				return 1;
+			}
 
 			if (msgDiff != 0){
 				continue;
