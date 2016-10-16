@@ -1,10 +1,10 @@
 #include <ws2tcpip.h>
 #include <stdlib.h>
-#include "Logger.h"
+#include "../Logger.h"
 #pragma comment (lib, "Ws2_32.lib")
 
 
-#define PORT "38010"
+#define PORT "59289"
 
 class Connection{
 private:

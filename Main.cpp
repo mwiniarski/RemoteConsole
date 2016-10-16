@@ -19,8 +19,8 @@ void mainLoop(){
 
 void main()
 {
-	//IpUploadScheduler ipus(500);
-	//ipus.run();
+	IpUploadScheduler ipus(500);
+	ipus.run();
 	mainLoop();
 
 

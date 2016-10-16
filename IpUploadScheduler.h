@@ -54,6 +54,7 @@ public:
 			chunk = curl_slist_append(chunk, "Content-Type: application/json");
 			curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
 
+
 			initOK = true;
 		}
 	}
