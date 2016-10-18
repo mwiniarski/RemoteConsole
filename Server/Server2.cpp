@@ -8,25 +8,26 @@
 #include<sys/socket.h>
 
 #define BUFLEN 512  //Max length of buffer
-#define PORT 8888   //The port on which to listen for incoming data
+//#define PORT 8888   //The port on which to listen for incoming data
 
-void die(char *s)
+int main(int argc, char* argv[])
 {
-    perror(s);
-    exit(1);
-}
+    int PORT = 8888;
+    if(argc == 2) {
+	PORT = atoi(argv[1]);
+    }
 
-int main(void)
-{
     struct sockaddr_in si_me, si_other;
 
-    int s, i, slen = sizeof(si_other) , recv_len;
+    int s, i;
+    socklen_t slen = sizeof(si_other), recv_len;
     char buf[BUFLEN];
 
     //create a UDP socket
     if ((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
     {
-        die("socket");
+        printf("socket");
+	exit(1);
     }
 
     // zero out the structure
@@ -39,25 +40,28 @@ int main(void)
     //bind socket to port
     if( bind(s , (struct sockaddr*)&si_me, sizeof(si_me) ) == -1)
     {
-        die("bind");
+        printf("bind");
+	exit(1);
     }
 
     //try to receive some data, this is a blocking call
     if ((recv_len = recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen)) == -1)
     {
-        die("recvfrom()");
+        printf("recvfrom()");
+	exit(1);
     }
     printf("Client endpoint:  %s:%d\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
 
     //send some!
     while(1)
     {
-        gets(buf);
+        scanf("%s", buf);
 
        //now reply the client with the same data
        if (sendto(s, buf, strlen(buf), 0, (struct sockaddr*) &si_other, slen) == -1)
        {
-            die("sendto()");
+            printf("sendto()");
+	    exit(1);
        }
     }
 
