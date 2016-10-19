@@ -84,12 +84,13 @@
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="TODO.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="Connection.h" />
     <ClInclude Include="IpUploadScheduler.h" />
     <ClInclude Include="RemoteConsole.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="TODO.txt" />
+    <ClInclude Include="uploadMyIp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

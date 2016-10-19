@@ -85,7 +85,6 @@
   <ItemGroup>
     <ClInclude Include="ClientConnection.h" />
     <ClInclude Include="IpDownloader.h" />
-    <ClInclude Include="Logger.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

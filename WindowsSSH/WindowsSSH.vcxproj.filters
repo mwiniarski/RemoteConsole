@@ -16,17 +16,20 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="RemoteConsole.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <Text Include="TODO.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="Connection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IpUploadScheduler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="TODO.txt" />
+    <ClInclude Include="RemoteConsole.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="uploadMyIp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
